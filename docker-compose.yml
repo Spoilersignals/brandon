@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: dams-postgres
+    environment:
+      POSTGRES_USER: dams
+      POSTGRES_PASSWORD: dams_password
+      POSTGRES_DB: dams
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dams-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dams-app
+    environment:
+      DATABASE_URL: postgresql://dams:dams_password@postgres:5432/dams?schema=public
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: change-this-secret-in-production
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - dams-network
+
+volumes:
+  postgres_data:
+
+networks:
+  dams-network:
+    driver: bridge

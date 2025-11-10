@@ -1,0 +1,196 @@
+Starting DAMS System...
+
+Step 1: Generating Prisma Client...
+
+> dams@1.0.0 db:generate
+> prisma generate
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 185ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Easily identify and fix slow SQL queries in your app. Optimize helps you enhance your visibility: https://pris.ly/--optimize
+
+
+Step 2: Pushing database schema...
+
+> dams@1.0.0 db:push
+> prisma db push
+
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "dams", schema "public" at "localhost:5432"
+
+The database is already in sync with the Prisma schema.
+
+✔ Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 188ms
+
+
+Step 3: Seeding sample data...
+
+> dams@1.0.0 db:seed
+> tsx prisma/seed.ts
+
+Seeding database...
+Database seeded successfully!
+Login credentials:
+Admin: admin@dams.com / admin123
+Manager: manager@dams.com / admin123
+Staff: staff@dams.com / admin123
+
+Step 4: Starting development server...
+
+> dams@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.15
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 5.6s
+ ✓ Compiled /src/middleware in 262ms
+ ✓ Compiled (223 modules)
+ ○ Compiling /users ...
+The user aborted a request.
+
+Retrying 1/3...
+The user aborted a request.
+
+Retrying 1/3...
+ ✓ Compiled /dashboard in 14.6s (872 modules)
+prisma:query SELECT "public"."Transaction"."id", "public"."Transaction"."amount", "public"."Transaction"."type"::text, "public"."Transaction"."category", "public"."Transaction"."date", "public"."Transaction"."description", "public"."Transaction"."projectId", "public"."Transaction"."addedBy", "public"."Transaction"."receiptUrl", "public"."Transaction"."approvedBy", "public"."Transaction"."approvedAt", "public"."Transaction"."createdAt", "public"."Transaction"."updatedAt" FROM "public"."Transaction" WHERE 1=1 ORDER BY "public"."Transaction"."createdAt" DESC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title" FROM "public"."Project" WHERE "public"."Project"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT COUNT(*), "public"."Project"."status"::text FROM "public"."Project" WHERE 1=1 GROUP BY "public"."Project"."status" OFFSET $1
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."Project"."id" FROM "public"."Project" WHERE 1=1 OFFSET $1) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."Task"."id" FROM "public"."Task" WHERE "public"."Task"."status" IN (CAST($1::text AS "public"."TaskStatus"),CAST($2::text AS "public"."TaskStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."User"."id" FROM "public"."User" WHERE 1=1 OFFSET $1) AS "sub"
+prisma:query SELECT SUM("amount") FROM (SELECT "public"."Transaction"."amount" FROM "public"."Transaction" WHERE "public"."Transaction"."type" = CAST($1::text AS "public"."TransactionType") OFFSET $2) AS "sub"
+prisma:query SELECT SUM("amount") FROM (SELECT "public"."Transaction"."amount" FROM "public"."Transaction" WHERE "public"."Transaction"."type" = CAST($1::text AS "public"."TransactionType") OFFSET $2) AS "sub"
+ GET /dashboard?_rsc=1gtj6 200 in 12225ms
+ ○ Compiling /api/projects ...
+ ✓ Compiled /api/projects in 530ms (532 modules)
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title", "public"."Project"."description", "public"."Project"."startDate", "public"."Project"."endDate", "public"."Project"."status"::text, "public"."Project"."budget", "public"."Project"."spentAmount", "public"."Project"."departmentId", "public"."Project"."createdById", "public"."Project"."createdAt", "public"."Project"."updatedAt", COALESCE("aggr_selection_0_Task"."_aggr_count_tasks", 0) AS "_aggr_count_tasks" FROM "public"."Project" LEFT JOIN (SELECT "public"."Task"."projectId", COUNT(*) AS "_aggr_count_tasks" FROM "public"."Task" WHERE 1=1 GROUP BY "public"."Task"."projectId") AS "aggr_selection_0_Task" ON ("public"."Project"."id" = "aggr_selection_0_Task"."projectId") WHERE 1=1 ORDER BY "public"."Project"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Department"."id", "public"."Department"."name" FROM "public"."Department" WHERE "public"."Department"."id" IN ($1,$2) OFFSET $3
+ GET /api/projects 200 in 809ms
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title", "public"."Project"."description", "public"."Project"."startDate", "public"."Project"."endDate", "public"."Project"."status"::text, "public"."Project"."budget", "public"."Project"."spentAmount", "public"."Project"."departmentId", "public"."Project"."createdById", "public"."Project"."createdAt", "public"."Project"."updatedAt", COALESCE("aggr_selection_0_Task"."_aggr_count_tasks", 0) AS "_aggr_count_tasks" FROM "public"."Project" LEFT JOIN (SELECT "public"."Task"."projectId", COUNT(*) AS "_aggr_count_tasks" FROM "public"."Task" WHERE 1=1 GROUP BY "public"."Task"."projectId") AS "aggr_selection_0_Task" ON ("public"."Project"."id" = "aggr_selection_0_Task"."projectId") WHERE 1=1 ORDER BY "public"."Project"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Department"."id", "public"."Department"."name" FROM "public"."Department" WHERE "public"."Department"."id" IN ($1,$2) OFFSET $3
+ GET /api/projects 200 in 224ms
+ ✓ Compiled /performance in 497ms (886 modules)
+ ✓ Compiled /api/performance in 237ms (542 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Performance"."id", "public"."Performance"."userId", "public"."Performance"."goal", "public"."Performance"."score", "public"."Performance"."period", "public"."Performance"."remarks", "public"."Performance"."evaluatedBy", "public"."Performance"."createdAt", "public"."Performance"."updatedAt" FROM "public"."Performance" WHERE 1=1 ORDER BY "public"."Performance"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."department" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/performance 200 in 313ms
+prisma:query SELECT "public"."Performance"."id", "public"."Performance"."userId", "public"."Performance"."goal", "public"."Performance"."score", "public"."Performance"."period", "public"."Performance"."remarks", "public"."Performance"."evaluatedBy", "public"."Performance"."createdAt", "public"."Performance"."updatedAt" FROM "public"."Performance" WHERE 1=1 ORDER BY "public"."Performance"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."department" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/performance 200 in 18ms
+ ✓ Compiled /finance in 367ms (898 modules)
+ ✓ Compiled /api/transactions in 391ms (550 modules)
+prisma:query SELECT "public"."Transaction"."id", "public"."Transaction"."amount", "public"."Transaction"."type"::text, "public"."Transaction"."category", "public"."Transaction"."date", "public"."Transaction"."description", "public"."Transaction"."projectId", "public"."Transaction"."addedBy", "public"."Transaction"."receiptUrl", "public"."Transaction"."approvedBy", "public"."Transaction"."approvedAt", "public"."Transaction"."createdAt", "public"."Transaction"."updatedAt" FROM "public"."Transaction" WHERE 1=1 ORDER BY "public"."Transaction"."date" DESC OFFSET $1
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title" FROM "public"."Project" WHERE "public"."Project"."id" IN ($1,$2,$3) OFFSET $4
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+ GET /api/transactions 200 in 444ms
+prisma:query SELECT "public"."Transaction"."id", "public"."Transaction"."amount", "public"."Transaction"."type"::text, "public"."Transaction"."category", "public"."Transaction"."date", "public"."Transaction"."description", "public"."Transaction"."projectId", "public"."Transaction"."addedBy", "public"."Transaction"."receiptUrl", "public"."Transaction"."approvedBy", "public"."Transaction"."approvedAt", "public"."Transaction"."createdAt", "public"."Transaction"."updatedAt" FROM "public"."Transaction" WHERE 1=1 ORDER BY "public"."Transaction"."date" DESC OFFSET $1
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title" FROM "public"."Project" WHERE "public"."Project"."id" IN ($1,$2,$3) OFFSET $4
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+ GET /api/transactions 200 in 25ms
+ ✓ Compiled /reports in 364ms (910 modules)
+ ✓ Compiled /api/reports in 380ms (558 modules)
+prisma:query SELECT 1
+prisma:query SELECT "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt" FROM "public"."Report" WHERE 1=1 ORDER BY "public"."Report"."createdAt" DESC OFFSET $1
+ GET /api/reports 200 in 437ms
+prisma:query SELECT "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt" FROM "public"."Report" WHERE 1=1 ORDER BY "public"."Report"."createdAt" DESC OFFSET $1
+ GET /api/reports 200 in 17ms
+ ✓ Compiled /api/reports/generate in 268ms (560 modules)
+prisma:query SELECT "public"."Transaction"."id", "public"."Transaction"."amount", "public"."Transaction"."type"::text, "public"."Transaction"."category", "public"."Transaction"."date", "public"."Transaction"."description", "public"."Transaction"."projectId", "public"."Transaction"."addedBy", "public"."Transaction"."receiptUrl", "public"."Transaction"."approvedBy", "public"."Transaction"."approvedAt", "public"."Transaction"."createdAt", "public"."Transaction"."updatedAt" FROM "public"."Transaction" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title" FROM "public"."Project" WHERE "public"."Project"."id" IN ($1,$2,$3) OFFSET $4
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query INSERT INTO "public"."Report" ("id","title","type","generatedBy","metadata","createdAt") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt"
+prisma:query INSERT INTO "public"."AuditLog" ("id","userId","action","tableName","recordId","newData","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."AuditLog"."id", "public"."AuditLog"."userId", "public"."AuditLog"."action", "public"."AuditLog"."tableName", "public"."AuditLog"."recordId", "public"."AuditLog"."previousData", "public"."AuditLog"."newData", "public"."AuditLog"."ipAddress", "public"."AuditLog"."userAgent", "public"."AuditLog"."createdAt"
+ POST /api/reports/generate 201 in 355ms
+prisma:query SELECT "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt" FROM "public"."Report" WHERE 1=1 ORDER BY "public"."Report"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/reports 200 in 26ms
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title", "public"."Project"."description", "public"."Project"."startDate", "public"."Project"."endDate", "public"."Project"."status"::text, "public"."Project"."budget", "public"."Project"."spentAmount", "public"."Project"."departmentId", "public"."Project"."createdById", "public"."Project"."createdAt", "public"."Project"."updatedAt", COALESCE("aggr_selection_0_Task"."_aggr_count_tasks", 0) AS "_aggr_count_tasks" FROM "public"."Project" LEFT JOIN (SELECT "public"."Task"."projectId", COUNT(*) AS "_aggr_count_tasks" FROM "public"."Task" WHERE 1=1 GROUP BY "public"."Task"."projectId") AS "aggr_selection_0_Task" ON ("public"."Project"."id" = "aggr_selection_0_Task"."projectId") WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query INSERT INTO "public"."Report" ("id","title","type","generatedBy","metadata","createdAt") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt"
+prisma:query INSERT INTO "public"."AuditLog" ("id","userId","action","tableName","recordId","newData","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."AuditLog"."id", "public"."AuditLog"."userId", "public"."AuditLog"."action", "public"."AuditLog"."tableName", "public"."AuditLog"."recordId", "public"."AuditLog"."previousData", "public"."AuditLog"."newData", "public"."AuditLog"."ipAddress", "public"."AuditLog"."userAgent", "public"."AuditLog"."createdAt"
+ POST /api/reports/generate 201 in 30ms
+prisma:query SELECT "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt" FROM "public"."Report" WHERE 1=1 ORDER BY "public"."Report"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/reports 200 in 16ms
+prisma:query SELECT "public"."Performance"."id", "public"."Performance"."userId", "public"."Performance"."goal", "public"."Performance"."score", "public"."Performance"."period", "public"."Performance"."remarks", "public"."Performance"."evaluatedBy", "public"."Performance"."createdAt", "public"."Performance"."updatedAt" FROM "public"."Performance" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."department" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+prisma:query INSERT INTO "public"."Report" ("id","title","type","generatedBy","metadata","createdAt") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt"
+prisma:query INSERT INTO "public"."AuditLog" ("id","userId","action","tableName","recordId","newData","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."AuditLog"."id", "public"."AuditLog"."userId", "public"."AuditLog"."action", "public"."AuditLog"."tableName", "public"."AuditLog"."recordId", "public"."AuditLog"."previousData", "public"."AuditLog"."newData", "public"."AuditLog"."ipAddress", "public"."AuditLog"."userAgent", "public"."AuditLog"."createdAt"
+ POST /api/reports/generate 201 in 22ms
+prisma:query SELECT "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt" FROM "public"."Report" WHERE 1=1 ORDER BY "public"."Report"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/reports 200 in 16ms
+prisma:query SELECT "public"."Task"."id", "public"."Task"."projectId", "public"."Task"."assignedTo", "public"."Task"."createdBy", "public"."Task"."title", "public"."Task"."description", "public"."Task"."deadline", "public"."Task"."progress", "public"."Task"."status"::text, "public"."Task"."priority"::text, "public"."Task"."createdAt", "public"."Task"."updatedAt" FROM "public"."Task" WHERE 1=1 OFFSET $1
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title" FROM "public"."Project" WHERE "public"."Project"."id" IN ($1,$2,$3) OFFSET $4
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+prisma:query INSERT INTO "public"."Report" ("id","title","type","generatedBy","metadata","createdAt") VALUES ($1,$2,$3,$4,$5,$6) RETURNING "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt"
+prisma:query INSERT INTO "public"."AuditLog" ("id","userId","action","tableName","recordId","newData","createdAt") VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING "public"."AuditLog"."id", "public"."AuditLog"."userId", "public"."AuditLog"."action", "public"."AuditLog"."tableName", "public"."AuditLog"."recordId", "public"."AuditLog"."previousData", "public"."AuditLog"."newData", "public"."AuditLog"."ipAddress", "public"."AuditLog"."userAgent", "public"."AuditLog"."createdAt"
+ POST /api/reports/generate 201 in 23ms
+prisma:query SELECT "public"."Report"."id", "public"."Report"."title", "public"."Report"."type", "public"."Report"."generatedBy", "public"."Report"."filePath", "public"."Report"."fileUrl", "public"."Report"."metadata", "public"."Report"."createdAt" FROM "public"."Report" WHERE 1=1 ORDER BY "public"."Report"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/reports 200 in 16ms
+ ✓ Compiled /notifications in 384ms (924 modules)
+ ○ Compiling /api/notifications ...
+ ✓ Compiled /api/notifications in 622ms (568 modules)
+prisma:query SELECT "public"."Notification"."id", "public"."Notification"."userId", "public"."Notification"."message", "public"."Notification"."type", "public"."Notification"."status"::text, "public"."Notification"."metadata", "public"."Notification"."createdAt", "public"."Notification"."readAt" FROM "public"."Notification" WHERE "public"."Notification"."userId" = $1 ORDER BY "public"."Notification"."createdAt" DESC OFFSET $2
+ GET /api/notifications 200 in 684ms
+prisma:query SELECT "public"."Notification"."id", "public"."Notification"."userId", "public"."Notification"."message", "public"."Notification"."type", "public"."Notification"."status"::text, "public"."Notification"."metadata", "public"."Notification"."createdAt", "public"."Notification"."readAt" FROM "public"."Notification" WHERE "public"."Notification"."userId" = $1 ORDER BY "public"."Notification"."createdAt" DESC OFFSET $2
+ GET /api/notifications 200 in 13ms
+ ✓ Compiled /api/users in 248ms (570 modules)
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."role"::text, "public"."User"."department", "public"."User"."contactInfo", "public"."User"."profileImage", "public"."User"."isActive", "public"."User"."createdAt" FROM "public"."User" WHERE 1=1 ORDER BY "public"."User"."createdAt" DESC OFFSET $1
+ GET /api/users 200 in 306ms
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."role"::text, "public"."User"."department", "public"."User"."contactInfo", "public"."User"."profileImage", "public"."User"."isActive", "public"."User"."createdAt" FROM "public"."User" WHERE 1=1 ORDER BY "public"."User"."createdAt" DESC OFFSET $1
+ GET /api/users 200 in 16ms
+prisma:query SELECT 1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."role"::text, "public"."User"."department", "public"."User"."contactInfo", "public"."User"."profileImage", "public"."User"."isActive", "public"."User"."createdAt" FROM "public"."User" WHERE 1=1 ORDER BY "public"."User"."createdAt" DESC OFFSET $1
+ GET /api/users 200 in 17ms
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."role"::text, "public"."User"."department", "public"."User"."contactInfo", "public"."User"."profileImage", "public"."User"."isActive", "public"."User"."createdAt" FROM "public"."User" WHERE 1=1 ORDER BY "public"."User"."createdAt" DESC OFFSET $1
+ GET /api/users 200 in 20ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1234ms (885 modules)
+ ✓ Compiled /dashboard in 333ms (551 modules)
+prisma:query SELECT 1
+prisma:query SELECT 1
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."Project"."id" FROM "public"."Project" WHERE 1=1 OFFSET $1) AS "sub"
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."Task"."id" FROM "public"."Task" WHERE "public"."Task"."status" IN (CAST($1::text AS "public"."TaskStatus"),CAST($2::text AS "public"."TaskStatus")) OFFSET $3) AS "sub"
+prisma:query SELECT "public"."Transaction"."id", "public"."Transaction"."amount", "public"."Transaction"."type"::text, "public"."Transaction"."category", "public"."Transaction"."date", "public"."Transaction"."description", "public"."Transaction"."projectId", "public"."Transaction"."addedBy", "public"."Transaction"."receiptUrl", "public"."Transaction"."approvedBy", "public"."Transaction"."approvedAt", "public"."Transaction"."createdAt", "public"."Transaction"."updatedAt" FROM "public"."Transaction" WHERE 1=1 ORDER BY "public"."Transaction"."createdAt" DESC LIMIT $1 OFFSET $2
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title" FROM "public"."Project" WHERE "public"."Project"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT COUNT(*) FROM (SELECT "public"."User"."id" FROM "public"."User" WHERE 1=1 OFFSET $1) AS "sub"
+prisma:query SELECT COUNT(*), "public"."Project"."status"::text FROM "public"."Project" WHERE 1=1 GROUP BY "public"."Project"."status" OFFSET $1
+prisma:query SELECT SUM("amount") FROM (SELECT "public"."Transaction"."amount" FROM "public"."Transaction" WHERE "public"."Transaction"."type" = CAST($1::text AS "public"."TransactionType") OFFSET $2) AS "sub"
+prisma:query SELECT SUM("amount") FROM (SELECT "public"."Transaction"."amount" FROM "public"."Transaction" WHERE "public"."Transaction"."type" = CAST($1::text AS "public"."TransactionType") OFFSET $2) AS "sub"
+ GET /dashboard?_rsc=1gtj6 200 in 755ms
+ ✓ Compiled /performance in 212ms (558 modules)
+ ○ Compiling /api/performance ...
+ ✓ Compiled /api/performance in 632ms (560 modules)
+prisma:query SELECT "public"."Performance"."id", "public"."Performance"."userId", "public"."Performance"."goal", "public"."Performance"."score", "public"."Performance"."period", "public"."Performance"."remarks", "public"."Performance"."evaluatedBy", "public"."Performance"."createdAt", "public"."Performance"."updatedAt" FROM "public"."Performance" WHERE 1=1 ORDER BY "public"."Performance"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."department" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/performance 200 in 850ms
+prisma:query SELECT "public"."Performance"."id", "public"."Performance"."userId", "public"."Performance"."goal", "public"."Performance"."score", "public"."Performance"."period", "public"."Performance"."remarks", "public"."Performance"."evaluatedBy", "public"."Performance"."createdAt", "public"."Performance"."updatedAt" FROM "public"."Performance" WHERE 1=1 ORDER BY "public"."Performance"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name", "public"."User"."email", "public"."User"."department" FROM "public"."User" WHERE "public"."User"."id" IN ($1) OFFSET $2
+ GET /api/performance 200 in 39ms
+ ✓ Compiled /projects in 202ms (565 modules)
+ ✓ Compiled /api/projects in 516ms (567 modules)
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title", "public"."Project"."description", "public"."Project"."startDate", "public"."Project"."endDate", "public"."Project"."status"::text, "public"."Project"."budget", "public"."Project"."spentAmount", "public"."Project"."departmentId", "public"."Project"."createdById", "public"."Project"."createdAt", "public"."Project"."updatedAt", COALESCE("aggr_selection_0_Task"."_aggr_count_tasks", 0) AS "_aggr_count_tasks" FROM "public"."Project" LEFT JOIN (SELECT "public"."Task"."projectId", COUNT(*) AS "_aggr_count_tasks" FROM "public"."Task" WHERE 1=1 GROUP BY "public"."Task"."projectId") AS "aggr_selection_0_Task" ON ("public"."Project"."id" = "aggr_selection_0_Task"."projectId") WHERE 1=1 ORDER BY "public"."Project"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Department"."id", "public"."Department"."name" FROM "public"."Department" WHERE "public"."Department"."id" IN ($1,$2) OFFSET $3
+ GET /api/projects 200 in 574ms
+prisma:query SELECT "public"."Project"."id", "public"."Project"."title", "public"."Project"."description", "public"."Project"."startDate", "public"."Project"."endDate", "public"."Project"."status"::text, "public"."Project"."budget", "public"."Project"."spentAmount", "public"."Project"."departmentId", "public"."Project"."createdById", "public"."Project"."createdAt", "public"."Project"."updatedAt", COALESCE("aggr_selection_0_Task"."_aggr_count_tasks", 0) AS "_aggr_count_tasks" FROM "public"."Project" LEFT JOIN (SELECT "public"."Task"."projectId", COUNT(*) AS "_aggr_count_tasks" FROM "public"."Task" WHERE 1=1 GROUP BY "public"."Task"."projectId") AS "aggr_selection_0_Task" ON ("public"."Project"."id" = "aggr_selection_0_Task"."projectId") WHERE 1=1 ORDER BY "public"."Project"."createdAt" DESC OFFSET $1
+prisma:query SELECT "public"."User"."id", "public"."User"."name" FROM "public"."User" WHERE "public"."User"."id" IN ($1,$2) OFFSET $3
+prisma:query SELECT "public"."Department"."id", "public"."Department"."name" FROM "public"."Department" WHERE "public"."Department"."id" IN ($1,$2) OFFSET $3
+ GET /api/projects 200 in 176ms
