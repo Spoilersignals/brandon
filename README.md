@@ -90,8 +90,8 @@ A comprehensive web-based platform designed to enhance transparency, efficiency,
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd brandoni
+   git clone https://github.com/Spoilersignals/brandon.git
+   cd brandon
    ```
 
 2. **Install dependencies**

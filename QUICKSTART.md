@@ -6,8 +6,8 @@ Get up and running with DAMS in 5 minutes!
 
 ```bash
 # 1. Clone the repository
-git clone <repository-url>
-cd brandoni
+git clone https://github.com/Spoilersignals/brandon.git
+cd brandon
 
 # 2. Install dependencies
 npm install
