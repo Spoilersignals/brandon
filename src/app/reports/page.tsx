@@ -40,6 +40,32 @@ export default function ReportsPage() {
     }
   };
 
+  const downloadReport = (reportData: any) => {
+    const content = JSON.stringify(reportData, null, 2);
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${reportData.report.type}-report-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const downloadHistoryReport = (report: any) => {
+    const content = JSON.stringify(report.metadata, null, 2);
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${report.type}-report-${report.createdAt.split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const reportTypes = [
     {
       type: "financial",
@@ -111,7 +137,7 @@ export default function ReportsPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Generated Report: {generatedReport.report.title}</CardTitle>
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => downloadReport(generatedReport)}>
                 <Download className="mr-2 h-4 w-4" />
                 Download PDF
               </Button>
@@ -249,7 +275,7 @@ export default function ReportsPage() {
                   <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
                     {report.type}
                   </span>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => downloadHistoryReport(report)}>
                     <Download className="h-4 w-4" />
                   </Button>
                 </div>

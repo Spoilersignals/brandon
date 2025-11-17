@@ -3,6 +3,23 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, Users, UserCheck, UserX, Shield } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
@@ -10,6 +27,18 @@ export default function UsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "STAFF",
+    department: "",
+    contactInfo: "",
+  });
+  const [formErrors, setFormErrors] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -26,6 +55,118 @@ export default function UsersPage() {
         console.error(err);
         setLoading(false);
       });
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (formErrors) {
+      setFormErrors(null);
+    }
+    if (message) {
+      setMessage(null);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormErrors(null);
+    setMessage(null);
+
+    if (!formData.name.trim()) {
+      setFormErrors({ name: "Name is required" });
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setFormErrors({ email: "Email is required" });
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      setFormErrors({ email: "Invalid email format" });
+      return;
+    }
+
+    if (!formData.password) {
+      setFormErrors({ password: "Password is required" });
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setFormErrors({ password: "Password must be at least 6 characters" });
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data.error === "User already exists") {
+          setFormErrors({ email: "Email already exists" });
+        } else if (Array.isArray(data.error)) {
+          const errors: any = {};
+          data.error.forEach((err: any) => {
+            errors[err.path[0]] = err.message;
+          });
+          setFormErrors(errors);
+        } else {
+          setMessage({ type: "error", text: data.error || "Failed to create user" });
+        }
+        setSubmitting(false);
+        return;
+      }
+
+      setMessage({ type: "success", text: "User created successfully!" });
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        role: "STAFF",
+        department: "",
+        contactInfo: "",
+      });
+      fetchUsers();
+      
+      setTimeout(() => {
+        setIsDialogOpen(false);
+        setMessage(null);
+      }, 1500);
+    } catch (error) {
+      setMessage({ type: "error", text: "Failed to create user" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        role: "STAFF",
+        department: "",
+        contactInfo: "",
+      });
+      setFormErrors(null);
+      setMessage(null);
+    }
   };
 
   const getRoleBadgeColor = (role: string) => {
@@ -63,13 +204,144 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <>
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add New User</DialogTitle>
+            <DialogDescription>
+              Create a new user account. All fields marked with * are required.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit}>
+            <div className="grid gap-4 py-4">
+              {message && (
+                <div
+                  className={`p-3 rounded-md text-sm ${
+                    message.type === "success"
+                      ? "bg-green-50 text-green-800 border border-green-200"
+                      : "bg-red-50 text-red-800 border border-red-200"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+
+              <div className="grid gap-2">
+                <Label htmlFor="name">Name *</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  placeholder="John Doe"
+                  disabled={submitting}
+                />
+                {formErrors?.name && (
+                  <p className="text-sm text-red-600">{formErrors.name}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  placeholder="john.doe@example.com"
+                  disabled={submitting}
+                />
+                {formErrors?.email && (
+                  <p className="text-sm text-red-600">{formErrors.email}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password *</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  placeholder="Minimum 6 characters"
+                  disabled={submitting}
+                />
+                {formErrors?.password && (
+                  <p className="text-sm text-red-600">{formErrors.password}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="role">Role *</Label>
+                <Select
+                  value={formData.role}
+                  onValueChange={(value) => handleInputChange("role", value)}
+                  disabled={submitting}
+                >
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="STAFF">Staff</SelectItem>
+                    <SelectItem value="MANAGER">Manager</SelectItem>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="AUDITOR">Auditor</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formErrors?.role && (
+                  <p className="text-sm text-red-600">{formErrors.role}</p>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="department">Department</Label>
+                <Input
+                  id="department"
+                  type="text"
+                  value={formData.department}
+                  onChange={(e) => handleInputChange("department", e.target.value)}
+                  placeholder="e.g., IT, Finance, HR"
+                  disabled={submitting}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="contactInfo">Contact Info</Label>
+                <Input
+                  id="contactInfo"
+                  type="text"
+                  value={formData.contactInfo}
+                  onChange={(e) => handleInputChange("contactInfo", e.target.value)}
+                  placeholder="Phone or additional contact"
+                  disabled={submitting}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleDialogClose(false)}
+                disabled={submitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Creating..." : "Create User"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">User Management</h1>
           <p className="text-gray-500">Manage users, roles, and permissions</p>
         </div>
-        <Button>
+        <Button onClick={() => setIsDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" />
           Add User
         </Button>
@@ -240,6 +512,7 @@ export default function UsersPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }

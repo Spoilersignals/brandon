@@ -3,13 +3,42 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, TrendingUp, Award, Target } from "lucide-react";
 
 export default function PerformancePage() {
   const [performances, setPerformances] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [formData, setFormData] = useState({
+    userId: "",
+    goal: "",
+    score: "",
+    period: "",
+    remarks: "",
+  });
 
-  useEffect(() => {
+  const fetchPerformances = () => {
     fetch("/api/performance")
       .then((res) => res.json())
       .then((data) => {
@@ -20,6 +49,14 @@ export default function PerformancePage() {
         console.error(err);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchPerformances();
+    fetch("/api/users")
+      .then((res) => res.json())
+      .then((data) => setUsers(data))
+      .catch((err) => console.error(err));
   }, []);
 
   const averageScore = performances.length > 0
@@ -44,6 +81,40 @@ export default function PerformancePage() {
     return "Needs Improvement";
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch("/api/performance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: formData.userId,
+          goal: formData.goal,
+          score: Number(formData.score),
+          period: formData.period,
+          remarks: formData.remarks || undefined,
+        }),
+      });
+
+      if (response.ok) {
+        setMessage({ type: "success", text: "Performance evaluation created successfully!" });
+        setFormData({ userId: "", goal: "", score: "", period: "", remarks: "" });
+        setOpen(false);
+        fetchPerformances();
+      } else {
+        const error = await response.json();
+        setMessage({ type: "error", text: error.error || "Failed to create evaluation" });
+      }
+    } catch (error) {
+      setMessage({ type: "error", text: "An error occurred" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-64">Loading...</div>;
   }
@@ -55,10 +126,116 @@ export default function PerformancePage() {
           <h1 className="text-3xl font-bold">Performance Tracking</h1>
           <p className="text-gray-500">Monitor and evaluate team performance</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Evaluation
-        </Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Evaluation
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Create Performance Evaluation</DialogTitle>
+              <DialogDescription>
+                Add a new performance evaluation for an employee.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="userId">Employee *</Label>
+                <Select
+                  value={formData.userId}
+                  onValueChange={(value) => setFormData({ ...formData, userId: value })}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select employee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users.map((user) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.name} - {user.department || "No dept"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="goal">Goal *</Label>
+                <Textarea
+                  id="goal"
+                  placeholder="Enter performance goal"
+                  value={formData.goal}
+                  onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="score">Score (0-100) *</Label>
+                <Input
+                  id="score"
+                  type="number"
+                  min="0"
+                  max="100"
+                  placeholder="Enter score"
+                  value={formData.score}
+                  onChange={(e) => setFormData({ ...formData, score: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="period">Period *</Label>
+                <Input
+                  id="period"
+                  type="text"
+                  placeholder="e.g., 2025-11 or Q1 2025"
+                  value={formData.period}
+                  onChange={(e) => setFormData({ ...formData, period: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="remarks">Remarks</Label>
+                <Textarea
+                  id="remarks"
+                  placeholder="Additional comments (optional)"
+                  value={formData.remarks}
+                  onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
+                />
+              </div>
+
+              {message && (
+                <div
+                  className={`p-3 rounded-md text-sm ${
+                    message.type === "success"
+                      ? "bg-green-50 text-green-800 border border-green-200"
+                      : "bg-red-50 text-red-800 border border-red-200"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              )}
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setOpen(false)}
+                  disabled={submitting}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={submitting}>
+                  {submitting ? "Creating..." : "Create Evaluation"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
